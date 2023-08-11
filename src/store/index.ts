@@ -1,3 +1,4 @@
+import { api } from '@/lib/api'
 import dynamicIconImports from 'lucide-react/dynamicIconImports'
 import { create } from 'zustand'
 
@@ -18,6 +19,19 @@ interface StoreState {
     [key: string]: number
   } | null
 
+  branch: Array<{
+    id: number
+    corporateName: string
+    fantasyName: string
+  }> | null
+
+  equipment: Array<{
+    id: number
+    code: string
+    description: string
+    familyId: number
+  }> | null
+
   load: () => Promise<void>
   searchData: (data: {
     period?:
@@ -36,6 +50,8 @@ export const useStore = create<StoreState>((set) => {
     summaryCards: null,
     family: null,
     status: null,
+    branch: null,
+    equipment: null,
 
     load: async () => {
       const response: StoreState['summaryCards'] = Array.from({
@@ -48,7 +64,25 @@ export const useStore = create<StoreState>((set) => {
         quantity: Math.round(Math.random() * 10000),
       }))
 
+      const [branch, equipment]: [
+        branch: StoreState['branch'],
+        equipment: StoreState['equipment'],
+      ] = await Promise.all([
+        await api.get('/public/branch/byLogin', {
+          params: {
+            login: 'dev_03',
+          },
+        }),
+        await api.get('/public/equipment/byLogin', {
+          params: {
+            login: 'dev_03',
+          },
+        }),
+      ])
+
       set({
+        equipment,
+        branch,
         summaryCards: response,
         family: Object.fromEntries(
           Array.from({ length: 25 }).map((_, i) => [

@@ -36,7 +36,23 @@ export const dynamicParams = true
 export const revalidate = true
 
 export default function Home() {
-  const { load, searchData, summaryCards } = useStore()
+  const { load, searchData, summaryCards, equipment, branch } = useStore()
+  const equipmentOptions = equipment?.length
+    ? equipment?.map(({ id, description, code }) => ({
+        value: String(id),
+        label: `${code} - ${description}`,
+      }))
+    : []
+
+  const branchOptions = branch?.length
+    ? branch?.map(({ id, corporateName }) => ({
+        value: String(id),
+        label: corporateName,
+      }))
+    : []
+
+  console.log(equipmentOptions, branchOptions)
+
   const filterForm = useForm<FilterSchemaType>({
     resolver: zodResolver(filterSchema),
   })
@@ -47,7 +63,9 @@ export default function Home() {
   }
 
   useEffect(() => {
-    load()
+    ;(async () => {
+      await load()
+    })()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -64,7 +82,7 @@ export default function Home() {
               className="h-9 w-9 rounded-md"
             />
             <h1 className="hidden bg-gradient-to-r from-violet-500 to-violet-600 bg-clip-text font-extrabold text-transparent sm:inline sm:text-lg md:text-2xl">
-              Dashboard Checklist
+              Dashboard Checklist {process.env.API_URL}
             </h1>
           </div>
           <span className="hidden text-xs uppercase text-blue-800/40 sm:inline">
@@ -93,26 +111,14 @@ export default function Home() {
 
                   <Form.Field>
                     <Form.Label>Filial</Form.Label>
-                    <Form.MultiSelect
-                      name="branch"
-                      options={[
-                        { label: 'Goiania', value: '1' },
-                        { label: 'Inhumas', value: '2' },
-                        { label: 'Jardins', value: '3' },
-                        { label: 'Goianira', value: '4' },
-                        { label: 'Goianesia', value: '5' },
-                      ]}
-                    />
+                    <Form.MultiSelect name="branch" options={branchOptions} />
                   </Form.Field>
 
                   <Form.Field>
                     <Form.Label>Ativo</Form.Label>
                     <Form.MultiSelect
                       name="active"
-                      options={[
-                        { label: 'Sim', value: '1' },
-                        { label: 'Não', value: '2' },
-                      ]}
+                      options={equipmentOptions}
                     />
                   </Form.Field>
 
