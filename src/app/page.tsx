@@ -32,6 +32,8 @@ const filterSchema = z.object({
 type FilterSchemaType = z.infer<typeof filterSchema>
 
 export const dynamic = 'force-dynamic'
+export const dynamicParams = true
+export const revalidate = true
 
 export default function Home() {
   const { load, searchData, summaryCards } = useStore()

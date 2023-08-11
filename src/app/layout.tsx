@@ -6,6 +6,10 @@ export const metadata: Metadata = {
   description: 'Por SmartNew Sistemas',
 }
 
+export const dynamic = 'force-dynamic'
+export const dynamicParams = true
+export const revalidate = true
+
 export default function RootLayout({
   children,
 }: {
