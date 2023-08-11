@@ -1,22 +1,22 @@
 'use client'
 import { CardStatus } from '@/components/CardStatus'
-import { FileText, ListFilter, SlidersHorizontal } from 'lucide-react'
+import { Bar } from '@/components/Charts/Bar'
+import { Donut } from '@/components/Charts/Donut'
+import { Form } from '@/components/Form'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
-import { Card, CardContent } from '@/components/ui/card'
-import { Bar } from '@/components/Charts/Bar'
-import { Donut } from '@/components/Charts/Donut'
-import { useForm, FormProvider } from 'react-hook-form'
-import { Button } from '@/components/ui/button'
-import { Form } from '@/components/Form'
-import { z } from 'zod'
-import { zodResolver } from '@hookform/resolvers/zod'
 import { useStore } from '@/store'
-import { useEffect } from 'react'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { FileText, ListFilter, SlidersHorizontal } from 'lucide-react'
 import Image from 'next/image'
+import { useEffect } from 'react'
+import { FormProvider, useForm } from 'react-hook-form'
+import { z } from 'zod'
 
 const filterSchema = z.object({
   period: z
@@ -30,6 +30,8 @@ const filterSchema = z.object({
 })
 
 type FilterSchemaType = z.infer<typeof filterSchema>
+
+export const dynamic = 'force-dynamic'
 
 export default function Home() {
   const { load, searchData, summaryCards } = useStore()

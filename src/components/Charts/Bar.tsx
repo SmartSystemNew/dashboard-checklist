@@ -2,6 +2,8 @@
 import { useStore } from '@/store'
 import Chart, { Props } from 'react-apexcharts'
 
+export const dynamic = 'force-dynamic'
+
 export function Bar() {
   const { family } = useStore()
 

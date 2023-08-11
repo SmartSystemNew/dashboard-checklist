@@ -1,6 +1,6 @@
 'use client'
 import dynamicIconImports from 'lucide-react/dynamicIconImports'
-import dynamic from 'next/dynamic'
+import dynamicNext from 'next/dynamic'
 import { ReactNode } from 'react'
 import { twMerge } from 'tailwind-merge'
 
@@ -12,6 +12,10 @@ interface CardStatusProps {
   children: ReactNode
 }
 
+export const dynamic = 'force-dynamic'
+export const dynamicParams = true
+export const revalidate = true
+
 export function CardStatus({
   quantity,
   label,
@@ -19,7 +23,7 @@ export function CardStatus({
   className,
   children,
 }: CardStatusProps) {
-  const Icon = dynamic(dynamicIconImports[icon])
+  const Icon = dynamicNext(dynamicIconImports[icon])
 
   return (
     <div

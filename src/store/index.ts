@@ -1,5 +1,5 @@
-import { create } from 'zustand'
 import dynamicIconImports from 'lucide-react/dynamicIconImports'
+import { create } from 'zustand'
 
 interface StoreState {
   summaryCards: Array<{
@@ -50,16 +50,16 @@ export const useStore = create<StoreState>((set) => {
 
       set({
         summaryCards: response,
-        family: {
-          'CB-30': 367,
-          'CB-35': 667,
-          'CB-20': 267,
-          'CB-45': 567,
-        },
+        family: Object.fromEntries(
+          Array.from({ length: 25 }).map((_, i) => [
+            `CB-${i + 1}`,
+            Math.round(Math.random() * 100),
+          ]),
+        ),
         status: {
           Vencida: 15,
           'Em andamento': 25,
-          Concluido: 4,
+          Concluido: 67,
           Cancelado: 32,
         },
       })
