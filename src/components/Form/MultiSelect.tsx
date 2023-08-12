@@ -18,6 +18,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover'
 import { useController, useFormContext } from 'react-hook-form'
+import { ScrollArea } from '../ui/scroll-area'
 
 interface MultiSelectProps {
   name: string
@@ -75,22 +76,24 @@ export function MultiSelect({ name, options }: MultiSelectProps) {
           <CommandInput placeholder="Pesquisar item..." />
           <CommandEmpty>Nenhum item encontrado.</CommandEmpty>
           <CommandGroup>
-            {options.map((option) => (
-              <CommandItem
-                key={option.value}
-                onSelect={() => handleSelect({ currentValue: option.value })}
-              >
-                <Check
-                  className={cn(
-                    'mr-2 h-4 w-4',
-                    field.value.includes(option.value)
-                      ? 'opacity-100'
-                      : 'opacity-0',
-                  )}
-                />
-                {option.label}
-              </CommandItem>
-            ))}
+            <ScrollArea className="max-h-[30vh] overflow-auto">
+              {options.map((option) => (
+                <CommandItem
+                  key={option.value}
+                  onSelect={() => handleSelect({ currentValue: option.value })}
+                >
+                  <Check
+                    className={cn(
+                      'mr-2 h-4 w-4',
+                      field.value.includes(option.value)
+                        ? 'opacity-100'
+                        : 'opacity-0',
+                    )}
+                  />
+                  {option.label}
+                </CommandItem>
+              ))}
+            </ScrollArea>
           </CommandGroup>
         </Command>
       </PopoverContent>

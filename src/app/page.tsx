@@ -36,14 +36,14 @@ export const dynamicParams = true
 export const revalidate = true
 
 export default function Home() {
-  const { load, searchData, summaryCards, equipment, branch } = useStore()
-  const equipmentOptions = equipment?.length
-    ? equipment?.map(({ id, description, code }) => ({
-        value: String(id),
-        label: `${code} - ${description}`,
-      }))
-    : []
-
+  const {
+    load,
+    searchData,
+    summaryCards,
+    equipment,
+    branch,
+    fillEquipmentsByBranch,
+  } = useStore()
   const branchOptions = branch?.length
     ? branch?.map(({ id, corporateName }) => ({
         value: String(id),
@@ -51,16 +51,31 @@ export default function Home() {
       }))
     : []
 
-  console.log(equipmentOptions, branchOptions)
-
   const filterForm = useForm<FilterSchemaType>({
     resolver: zodResolver(filterSchema),
   })
-  const { handleSubmit } = filterForm
+  const {
+    handleSubmit,
+    watch,
+    formState: { isSubmitting },
+  } = filterForm
+
+  const allBranches = watch('branch')
+
+  const equipmentOptions = equipment?.length
+    ? equipment?.map(({ id, description, code }) => ({
+        value: String(id),
+        label: `${code} - ${description}`,
+      }))
+    : []
 
   async function handleFilter(data: FilterSchemaType) {
-    searchData(data)
+    await searchData(data)
   }
+
+  useEffect(() => {
+    fillEquipmentsByBranch(allBranches || [''])
+  }, [allBranches])
 
   useEffect(() => {
     ;(async () => {
@@ -122,7 +137,11 @@ export default function Home() {
                     />
                   </Form.Field>
 
-                  <Button className="gap-3" type="submit">
+                  <Button
+                    className="gap-3"
+                    type="submit"
+                    disabled={isSubmitting}
+                  >
                     <ListFilter className="h-4 w-4" color="#fff" />
                     Filtrar
                   </Button>
@@ -147,9 +166,8 @@ export default function Home() {
                 icon={icon}
                 label={description}
                 quantity={quantity}
-              >
-                <span className={`h-6 w-6 rounded-full bg-[${color}]`} />
-              </CardStatus>
+                color={color}
+              />
             )
           })}
         </div>

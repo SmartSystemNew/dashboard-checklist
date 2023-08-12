@@ -32,6 +32,13 @@ interface StoreState {
     familyId: number
   }> | null
 
+  allEquipment: Array<{
+    id: number
+    code: string
+    description: string
+    familyId: number
+  }> | null
+
   load: () => Promise<void>
   searchData: (data: {
     period?:
@@ -43,15 +50,17 @@ interface StoreState {
     branch?: Array<string> | undefined
     active?: Array<string> | undefined
   }) => Promise<void>
+  fillEquipmentsByBranch: (branchIds: Array<string>) => void
 }
 
-export const useStore = create<StoreState>((set) => {
+export const useStore = create<StoreState>((set, get) => {
   return {
     summaryCards: null,
     family: null,
     status: null,
     branch: null,
     equipment: null,
+    allEquipment: null,
 
     load: async () => {
       const response: StoreState['summaryCards'] = Array.from({
@@ -68,20 +77,25 @@ export const useStore = create<StoreState>((set) => {
         branch: StoreState['branch'],
         equipment: StoreState['equipment'],
       ] = await Promise.all([
-        await api.get('/public/branch/byLogin', {
-          params: {
-            login: 'dev_03',
-          },
-        }),
-        await api.get('/public/equipment/byLogin', {
-          params: {
-            login: 'dev_03',
-          },
-        }),
+        await api
+          .get('/public/branch/byLogin', {
+            params: {
+              login: 'dev_03',
+            },
+          })
+          .then((res) => res.data),
+        await api
+          .get('/public/equipment/byLogin', {
+            params: {
+              login: 'dev_03',
+            },
+          })
+          .then((res) => res.data),
       ])
+      console.log(branch, equipment)
 
       set({
-        equipment,
+        allEquipment: equipment,
         branch,
         summaryCards: response,
         family: Object.fromEntries(
@@ -100,6 +114,36 @@ export const useStore = create<StoreState>((set) => {
     },
     searchData: async (data) => {
       console.log(data)
+      const response = await api
+        .get('public/checkList/dashForFilter', {
+          params: {
+            login: 'dev_03',
+            startDate: data.period?.from,
+            endDate: data.period?.to,
+            branch: data.branch?.join(','),
+            equipment: data.active?.join(','),
+          },
+        })
+        .then((res) => res.data)
+
+      const equipments = Object.fromEntries(
+        response.family.map((equipment: { name: string; quantity: string }) => {
+          return [equipment.name, equipment.quantity]
+        }),
+      )
+
+      set({
+        status: response.status,
+        family: equipments,
+      })
+    },
+    fillEquipmentsByBranch: async (equipmentsIds) => {
+      const allEquipments = get().allEquipment
+      const equipmentsFiltered = allEquipments?.filter(({ familyId }) =>
+        equipmentsIds.includes(String(familyId)),
+      )
+
+      set({ equipment: equipmentsFiltered })
     },
   }
 })
