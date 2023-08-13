@@ -164,7 +164,6 @@ export default function Home() {
           <div>
             <Lottie
               width={400}
-              hei
               options={{
                 loop: true,
                 autoplay: true,
