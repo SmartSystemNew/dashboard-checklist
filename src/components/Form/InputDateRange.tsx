@@ -27,8 +27,8 @@ export function InputDateRange({ className, name }: InputDateProps) {
     control,
     name,
     defaultValue: {
-      from: new Date(2022, 0, 20),
-      to: addDays(new Date(2022, 0, 20), 2),
+      from: new Date(),
+      to: addDays(new Date(), 3),
     },
   })
 

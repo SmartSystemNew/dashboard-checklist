@@ -30,6 +30,7 @@ interface StoreState {
     code: string
     description: string
     familyId: number
+    branchId: number
   }> | null
 
   allEquipment: Array<{
@@ -37,6 +38,7 @@ interface StoreState {
     code: string
     description: string
     familyId: number
+    branchId: number
   }> | null
 
   load: () => Promise<void>
@@ -63,16 +65,6 @@ export const useStore = create<StoreState>((set, get) => {
     allEquipment: null,
 
     load: async () => {
-      const response: StoreState['summaryCards'] = Array.from({
-        length: 4,
-      }).map((_, i) => ({
-        id: i,
-        description: 'conforme',
-        icon: 'x-circle',
-        color: '#ef4444',
-        quantity: Math.round(Math.random() * 10000),
-      }))
-
       const [branch, equipment]: [
         branch: StoreState['branch'],
         equipment: StoreState['equipment'],
@@ -92,24 +84,10 @@ export const useStore = create<StoreState>((set, get) => {
           })
           .then((res) => res.data),
       ])
-      console.log(branch, equipment)
 
       set({
         allEquipment: equipment,
         branch,
-        summaryCards: response,
-        family: Object.fromEntries(
-          Array.from({ length: 25 }).map((_, i) => [
-            `CB-${i + 1}`,
-            Math.round(Math.random() * 100),
-          ]),
-        ),
-        status: {
-          Vencida: 15,
-          'Em andamento': 25,
-          Concluido: 67,
-          Cancelado: 32,
-        },
       })
     },
     searchData: async (data) => {
@@ -132,15 +110,24 @@ export const useStore = create<StoreState>((set, get) => {
         }),
       )
 
+      const status = Object.fromEntries(
+        response.status.reduce((acc: string[], item: any) => {
+          return [...acc, ...Object.entries(item)]
+        }, []),
+      )
+
+      console.log(status)
+
       set({
-        status: response.status,
+        status,
         family: equipments,
+        summaryCards: response.summaryCards,
       })
     },
     fillEquipmentsByBranch: async (equipmentsIds) => {
       const allEquipments = get().allEquipment
-      const equipmentsFiltered = allEquipments?.filter(({ familyId }) =>
-        equipmentsIds.includes(String(familyId)),
+      const equipmentsFiltered = allEquipments?.filter(({ branchId }) =>
+        equipmentsIds.includes(String(branchId)),
       )
 
       set({ equipment: equipmentsFiltered })

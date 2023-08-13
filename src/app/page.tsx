@@ -10,6 +10,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
+import { Skeleton } from '@/components/ui/skeleton'
 import { useStore } from '@/store'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { FileText, ListFilter, SlidersHorizontal } from 'lucide-react'
@@ -159,30 +160,49 @@ export default function Home() {
 
       <main className="flex flex-1 flex-col gap-5 p-5">
         <div className="grid grid-cols-auto gap-4">
-          {summaryCards?.map(({ color, description, icon, id, quantity }) => {
-            return (
-              <CardStatus
-                key={id}
-                icon={icon}
-                label={description}
-                quantity={quantity}
-                color={color}
-              />
-            )
-          })}
+          {isSubmitting ? (
+            <>
+              <Skeleton className="h-[140px] rounded" />
+              <Skeleton className="h-[140px] rounded" />
+              <Skeleton className="h-[140px] rounded" />
+              <Skeleton className="h-[140px] rounded" />
+              <Skeleton className="h-[140px] rounded" />
+            </>
+          ) : (
+            summaryCards?.map(({ color, description, icon, id, quantity }) => {
+              return (
+                <CardStatus
+                  key={id}
+                  icon={icon}
+                  label={description}
+                  quantity={quantity}
+                  color={color}
+                />
+              )
+            })
+          )}
         </div>
 
         <div className="grid grid-cols-auto gap-4">
-          <Card>
-            <CardContent>
-              <Bar />
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent>
-              <Donut />
-            </CardContent>
-          </Card>
+          {isSubmitting ? (
+            <>
+              <Skeleton className="flex-1 rounded" />
+              <Skeleton className="flex-1 rounded" />
+            </>
+          ) : (
+            <>
+              <Card>
+                <CardContent>
+                  <Bar />
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent>
+                  <Donut />
+                </CardContent>
+              </Card>
+            </>
+          )}
         </div>
       </main>
     </div>
