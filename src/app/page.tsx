@@ -10,7 +10,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
-import { Skeleton } from '@/components/ui/skeleton'
 import { useStore } from '@/store'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { FileText, ListFilter, SlidersHorizontal } from 'lucide-react'
@@ -18,6 +17,8 @@ import Image from 'next/image'
 import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { z } from 'zod'
+import Lottie from 'react-lottie'
+import * as LoadingAnimation from '../../public/animation_ll9s3kr3.json'
 
 const filterSchema = z.object({
   period: z
@@ -86,7 +87,7 @@ export default function Home() {
   }, [])
 
   return (
-    <div className="flex w-full flex-col bg-zinc-50">
+    <div className="flex h-full w-full flex-col bg-zinc-50">
       <header className="flex w-full items-center justify-between gap-4 border-b border-zinc-200 bg-white p-5 py-5 sm:px-8 md:px-10">
         <div>
           <div className="flex items-center gap-2">
@@ -158,18 +159,27 @@ export default function Home() {
         </div>
       </header>
 
-      <main className="flex flex-1 flex-col gap-5 p-5">
-        <div className="grid grid-cols-auto gap-4">
-          {isSubmitting ? (
-            <>
-              <Skeleton className="h-[140px] rounded" />
-              <Skeleton className="h-[140px] rounded" />
-              <Skeleton className="h-[140px] rounded" />
-              <Skeleton className="h-[140px] rounded" />
-              <Skeleton className="h-[140px] rounded" />
-            </>
-          ) : (
-            summaryCards?.map(({ color, description, icon, id, quantity }) => {
+      {isSubmitting ? (
+        <div className="flex flex-1 items-center justify-center bg-white">
+          <div>
+            <Lottie
+              width={400}
+              hei
+              options={{
+                loop: true,
+                autoplay: true,
+                animationData: LoadingAnimation,
+                rendererSettings: {
+                  preserveAspectRatio: 'xMidYMid slice',
+                },
+              }}
+            />
+          </div>
+        </div>
+      ) : (
+        <main className="flex flex-1 flex-col gap-5 p-5">
+          <div className="grid grid-cols-auto gap-4">
+            {summaryCards?.map(({ color, description, icon, id, quantity }) => {
               return (
                 <CardStatus
                   key={id}
@@ -179,32 +189,23 @@ export default function Home() {
                   color={color}
                 />
               )
-            })
-          )}
-        </div>
+            })}
+          </div>
 
-        <div className="grid grid-cols-auto gap-4">
-          {isSubmitting ? (
-            <>
-              <Skeleton className="flex-1 rounded" />
-              <Skeleton className="flex-1 rounded" />
-            </>
-          ) : (
-            <>
-              <Card>
-                <CardContent>
-                  <Bar />
-                </CardContent>
-              </Card>
-              <Card>
-                <CardContent>
-                  <Donut />
-                </CardContent>
-              </Card>
-            </>
-          )}
-        </div>
-      </main>
+          <div className="grid grid-cols-auto gap-4">
+            <Card>
+              <CardContent>
+                <Bar />
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent>
+                <Donut />
+              </CardContent>
+            </Card>
+          </div>
+        </main>
+      )}
     </div>
   )
 }
