@@ -16,8 +16,8 @@ import { FileText, ListFilter, SlidersHorizontal } from 'lucide-react'
 import Image from 'next/image'
 import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { z } from 'zod'
 import Lottie from 'react-lottie'
+import { z } from 'zod'
 import * as LoadingAnimation from '../../public/animation_ll9s3kr3.json'
 
 const filterSchema = z.object({
@@ -77,6 +77,7 @@ export default function Home() {
 
   useEffect(() => {
     fillEquipmentsByBranch(allBranches || [''])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allBranches])
 
   useEffect(() => {
