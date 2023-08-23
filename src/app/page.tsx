@@ -153,10 +153,10 @@ export default function Home() {
             </PopoverContent>
           </Popover>
 
-          <Button variant="secondary">
+          {/* <Button variant="secondary">
             <FileText className="h-4 w-4" />
             PDF
-          </Button>
+          </Button> */}
         </div>
       </header>
 

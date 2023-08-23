@@ -1,6 +1,7 @@
 import { api } from '@/lib/api'
 import dynamicIconImports from 'lucide-react/dynamicIconImports'
 import { create } from 'zustand'
+import CryptoJS from 'crypto-js'
 
 interface StoreState {
   summaryCards: Array<{
@@ -65,6 +66,15 @@ export const useStore = create<StoreState>((set, get) => {
     allEquipment: null,
 
     load: async () => {
+      const searchParams = new URLSearchParams(window.location.search)
+      console.log(searchParams.get('u'))
+
+      if (!searchParams.has('u')) return
+      const login = CryptoJS.AES.decrypt(
+        searchParams.get('u') || '',
+        'checklist-km034hq3',
+      ).toString(CryptoJS.enc.Utf8)
+
       const [branch, equipment]: [
         branch: StoreState['branch'],
         equipment: StoreState['equipment'],
@@ -72,14 +82,14 @@ export const useStore = create<StoreState>((set, get) => {
         await api
           .get('/public/branch/byLogin', {
             params: {
-              login: 'dev_03',
+              login,
             },
           })
           .then((res) => res.data),
         await api
           .get('/public/equipment/byLogin', {
             params: {
-              login: 'dev_03',
+              login,
             },
           })
           .then((res) => res.data),
@@ -91,11 +101,18 @@ export const useStore = create<StoreState>((set, get) => {
       })
     },
     searchData: async (data) => {
-      console.log(data)
+      const searchParams = new URLSearchParams(window.location.search)
+
+      if (!searchParams.has('u')) return
+      const login = CryptoJS.AES.decrypt(
+        searchParams.get('u') || '',
+        'checklist-km034hq3',
+      ).toString(CryptoJS.enc.Utf8)
+
       const response = await api
         .get('public/checkList/dashForFilter', {
           params: {
-            login: 'dev_03',
+            login,
             startDate: data.period?.from,
             endDate: data.period?.to,
             branch: data.branch?.join(','),
@@ -115,8 +132,6 @@ export const useStore = create<StoreState>((set, get) => {
           return [...acc, ...Object.entries(item)]
         }, []),
       )
-
-      console.log(status)
 
       set({
         status,
